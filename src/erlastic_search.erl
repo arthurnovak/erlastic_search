@@ -484,7 +484,7 @@ search(Params, Index, Type, Query, Opts) ->
 -spec multi_search(#erls_params{}, list({HeaderInformation :: headers(), SearchRequest :: erlastic_json() | binary()})) -> {ok, ResultJson :: erlastic_success_result()} | {error, Reason :: any()}.
 multi_search(Params, HeaderJsonTuples) ->
     Body = lists:map(fun({HeaderInformation, SearchRequest}) ->
-        [ jsx:encode(HeaderInformation), <<"\n">>, maybe_encode_doc(SearchRequest), <<"\n">> ]
+        [ jiffy:encode(HeaderInformation), <<"\n">>, maybe_encode_doc(SearchRequest), <<"\n">> ]
     end, HeaderJsonTuples),
     erls_resource:get(Params, <<"/_msearch">>, [], [], iolist_to_binary(Body), Params#erls_params.http_client_options).
 
@@ -725,7 +725,7 @@ build_header(Operation, Index, Type, Id, HeaderInformation) ->
                 false -> [{<<"_id">>, Id} | Header1]
               end,
 
-    [jsx:encode([{erlang:atom_to_binary(Operation, utf8), Header2}])].
+    [jiffy:encode([{erlang:atom_to_binary(Operation, utf8), Header2}])].
 
 build_body(delete, no_body) ->
     [<<"\n">>];
